@@ -8,16 +8,27 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
+  var _title = '';
+
   @override
   Widget build(context) {
-    return const Padding(
-      padding: EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           TextField(
             maxLength: 50,
-            decoration: InputDecoration(label: Text('Title')),
+            decoration: const InputDecoration(label: Text('Title')),
+            onChanged: (value) => _title = value,
           ),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => print(_title),
+                child: const Text('Save Expense'),
+              ),
+            ],
+          )
         ],
       ),
     );
