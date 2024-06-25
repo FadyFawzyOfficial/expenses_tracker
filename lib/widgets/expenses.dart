@@ -33,7 +33,7 @@ class _ExpensesState extends State<Expenses> {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: _showExpenseBottomSheet,
             icon: const Icon(Icons.add_rounded),
           ),
         ],
@@ -49,4 +49,9 @@ class _ExpensesState extends State<Expenses> {
       ),
     );
   }
+
+  void _showExpenseBottomSheet() => showModalBottomSheet(
+        context: context,
+        builder: (context) => const Text('Add Expense Modal Bottom Sheet'),
+      );
 }
