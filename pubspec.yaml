@@ -35,6 +35,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   # Fady Fawzy Comment: Flutter Version is 3.16.9
   cupertino_icons: ^1.0.8
+  # RFC4122 (v1, v4, v5, v6, v7, v8) UUID Generator and Parser for Dart
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
