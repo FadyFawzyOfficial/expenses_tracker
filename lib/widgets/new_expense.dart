@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/date_formatter.dart';
+
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key});
 
@@ -44,7 +46,11 @@ class _NewExpenseState extends State<NewExpense> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Text('No selected date'),
+                    Text(
+                      _pickedDate != null
+                          ? formateDate(date: _pickedDate!)
+                          : 'No date selected',
+                    ),
                     IconButton(
                       onPressed: _showDatePicker,
                       icon: const Icon(Icons.calendar_month_rounded),
@@ -80,6 +86,7 @@ class _NewExpenseState extends State<NewExpense> {
     final now = DateTime.now();
     final firstDate = now.subtract(const Duration(days: 365));
 
-    showDatePicker(context: context, firstDate: firstDate, lastDate: now);
+    showDatePicker(context: context, firstDate: firstDate, lastDate: now)
+        .then((date) => setState(() => _pickedDate = date));
   }
 }

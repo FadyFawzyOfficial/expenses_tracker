@@ -1,3 +1,4 @@
+import 'package:expenses_tracker/utils/date_formatter.dart';
 import 'package:flutter/material.dart' show Icons, IconData;
 import 'package:uuid/uuid.dart';
 
@@ -26,6 +27,6 @@ class Expense {
     required this.category,
   }) : id = uuid.v4();
 
-  String get formattedDate => '${date.day}/${date.month}/${date.year}';
+  String get formattedDate => formateDate(date: date);
   IconData get categoryIcon => categoryIcons[category]!;
 }
