@@ -10,6 +10,7 @@ class NewExpense extends StatefulWidget {
 class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  DateTime? _pickedDate;
 
   @override
   void dispose() {
@@ -29,10 +30,29 @@ class _NewExpenseState extends State<NewExpense> {
             maxLength: 50,
             decoration: const InputDecoration(label: Text('Title')),
           ),
-          TextField(
-            controller: _amountController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(label: Text('Amount')),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(label: Text('Amount')),
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text('No selected date'),
+                    IconButton(
+                      onPressed: _showDatePicker,
+                      icon: const Icon(Icons.calendar_month_rounded),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
           const SizedBox(height: 16),
           Row(
@@ -54,5 +74,12 @@ class _NewExpenseState extends State<NewExpense> {
         ],
       ),
     );
+  }
+
+  void _showDatePicker() {
+    final now = DateTime.now();
+    final firstDate = now.subtract(const Duration(days: 365));
+
+    showDatePicker(context: context, firstDate: firstDate, lastDate: now);
   }
 }
