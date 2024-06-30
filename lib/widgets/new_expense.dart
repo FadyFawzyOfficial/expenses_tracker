@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/expense.dart';
 import '../utils/date_formatter.dart';
 
 class NewExpense extends StatefulWidget {
@@ -13,6 +14,7 @@ class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _pickedDate;
+  Category _pickedCategory = Category.leisure;
 
   @override
   void dispose() {
@@ -63,6 +65,19 @@ class _NewExpenseState extends State<NewExpense> {
           const SizedBox(height: 16),
           Row(
             children: [
+              DropdownButton(
+                value: _pickedCategory,
+                items: Category.values
+                    .map((category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category.name.toUpperCase()),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => _pickedCategory = value);
+                },
+              ),
               const Spacer(),
               TextButton(
                 onPressed: Navigator.of(context).pop,
