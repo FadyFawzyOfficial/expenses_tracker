@@ -4,7 +4,9 @@ import '../models/expense.dart';
 import '../utils/date_formatter.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  final void Function({required Expense expense}) onSubmitExpense;
+
+  const NewExpense({super.key, required this.onSubmitExpense});
 
   @override
   State<NewExpense> createState() => _NewExpenseState();
@@ -128,5 +130,15 @@ class _NewExpenseState extends State<NewExpense> {
 
       return;
     }
+
+    widget.onSubmitExpense(
+      expense: Expense(
+        title: _titleController.text,
+        amount: enteredAmount,
+        date: _pickedDate!,
+        category: _pickedCategory,
+      ),
+    );
+    Navigator.pop(context);
   }
 }
