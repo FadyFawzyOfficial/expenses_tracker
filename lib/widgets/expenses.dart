@@ -1,8 +1,8 @@
-import 'package:expenses_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
 import 'expenses_list/expenses_list.dart';
+import 'new_expense.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -45,10 +45,12 @@ class _ExpensesState extends State<Expenses> {
           children: [
             const Text('The chart'),
             Expanded(
-              child: ExpensesList(
-                expenses: _expenses,
-                onRemoveExpense: _removeExpense,
-              ),
+              child: _expenses.isEmpty
+                  ? const ExpensesEmptyState()
+                  : ExpensesList(
+                      expenses: _expenses,
+                      onRemoveExpense: _removeExpense,
+                    ),
             ),
           ],
         ),

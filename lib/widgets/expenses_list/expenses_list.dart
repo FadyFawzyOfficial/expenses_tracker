@@ -24,3 +24,14 @@ class ExpensesList extends StatelessWidget {
     );
   }
 }
+
+class ExpensesEmptyState extends StatelessWidget {
+  const ExpensesEmptyState({super.key});
+
+  @override
+  Widget build(context) {
+    return const Center(
+      child: Text('No expenses found. Start adding some!'),
+    );
+  }
+}
