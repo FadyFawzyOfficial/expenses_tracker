@@ -71,6 +71,32 @@ class _ExpensesState extends State<Expenses> {
   void _addNewExpense({required Expense expense}) =>
       setState(() => _expenses.add(expense));
 
-  void _removeExpense({required Expense expense}) =>
-      setState(() => _expenses.remove(expense));
+  void _removeExpense({required Expense expense}) {
+    final expenseIndex = _expenses.indexOf(expense);
+    setState(() => _expenses.remove(expense));
+    _showReaddExpenseSnackBar(
+      onReaddExpense: () => _readdExpense(
+        expense: expense,
+        expenseIndex: expenseIndex,
+      ),
+    );
+  }
+
+  void _readdExpense({required int expenseIndex, required Expense expense}) {
+    setState(() => _expenses.insert(expenseIndex, expense));
+  }
+
+  void _showReaddExpenseSnackBar({required VoidCallback onReaddExpense}) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Expense is deleted'),
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: onReaddExpense,
+        ),
+      ),
+    );
+  }
 }
