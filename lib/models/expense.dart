@@ -1,6 +1,7 @@
-import 'package:expenses_tracker/utils/date_formatter.dart';
 import 'package:flutter/material.dart' show Icons, IconData;
 import 'package:uuid/uuid.dart';
+
+import 'package:expenses_tracker/utils/date_formatter.dart';
 
 const uuid = Uuid();
 
@@ -29,4 +30,28 @@ class Expense {
 
   String get formattedDate => formateDate(date: date);
   IconData get categoryIcon => categoryIcons[category]!;
+}
+
+class ExpenseBucket {
+  final Category category;
+  final List<Expense> expenses;
+
+  ExpenseBucket({
+    required this.category,
+    required this.expenses,
+  });
+
+  ExpenseBucket.forCategory({
+    required List<Expense> expenses,
+    required this.category,
+  }) : expenses =
+            expenses.where((expense) => expense.category == category).toList();
+
+  double get totalExpenses {
+    var sum = 0.0;
+    for (final expense in expenses) {
+      sum += expense.amount;
+    }
+    return sum;
+  }
 }
