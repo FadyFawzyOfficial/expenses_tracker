@@ -17,12 +17,19 @@ class ExpenseItem extends StatelessWidget {
     return Dismissible(
       key: ValueKey(expense.id),
       onDismissed: (_) => onRemoveExpense(expense: expense),
+      background: ColoredBox(
+        color: Theme.of(context).colorScheme.error.withOpacity(0.75),
+      ),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(expense.title),
+              Text(
+                expense.title,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
