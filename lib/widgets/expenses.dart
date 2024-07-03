@@ -1,3 +1,4 @@
+import 'package:expenses_tracker/widgets/chart/chart.dart';
 import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
@@ -43,7 +44,7 @@ class _ExpensesState extends State<Expenses> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text('The chart'),
+            Chart(expenses: _expenses),
             Expanded(
               child: _expenses.isEmpty
                   ? const ExpensesEmptyState()
