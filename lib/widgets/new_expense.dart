@@ -27,74 +27,80 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              maxLength: 50,
-              decoration: const InputDecoration(label: Text('Title')),
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        return SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 16,
+                left: 16,
+                right: 16,
+                bottom: 16 + keyboardSpace,
+              ),
+              child: Column(
+                children: [
+                  if (width < 600)
+                    TitleTextField(titleController: _titleController)
+                  else
+                    TitleAmountRow(
+                      titleController: _titleController,
+                      amountController: _amountController,
+                    ),
+                  if (width < 600)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        AmountTextField(amountController: _amountController),
+                        DatePicker(
+                          pickedDate: _pickedDate,
+                          onPickerPressed: _showDatePicker,
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        CategoryDropDown(
+                          pickedCategory: _pickedCategory,
+                          onPicked: (category) {
+                            if (category == null) return;
+                            setState(() => _pickedCategory = category);
+                          },
+                        ),
+                        DatePicker(
+                          pickedDate: _pickedDate,
+                          onPickerPressed: _showDatePicker,
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+                  if (width < 600)
+                    Row(
+                      children: [
+                        CategoryDropDown(
+                          pickedCategory: _pickedCategory,
+                          onPicked: (category) {
+                            if (category == null) return;
+                            setState(() => _pickedCategory = category);
+                          },
+                        ),
+                        Expanded(
+                          child: DecisionSection(onSubmit: _submitExpense),
+                        ),
+                      ],
+                    )
+                  else
+                    DecisionSection(onSubmit: _submitExpense),
+                ],
+              ),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(label: Text('Amount')),
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        _pickedDate != null
-                            ? formateDate(date: _pickedDate!)
-                            : 'No date selected',
-                      ),
-                      IconButton(
-                        onPressed: _showDatePicker,
-                        icon: const Icon(Icons.calendar_month_rounded),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                DropdownButton(
-                  value: _pickedCategory,
-                  items: Category.values
-                      .map((category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category.name.toUpperCase()),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _pickedCategory = value);
-                  },
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: Navigator.of(context).pop,
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: _submitExpense,
-                  child: const Text('Save Expense'),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -116,7 +122,7 @@ class _NewExpenseState extends State<NewExpense> {
     if (isExpenseInValid) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AlertDialog.adaptive(
           title: const Text('Invalid input'),
           content: const Text(
             'Please, make sure a valid title, amount, date and category was entered',
@@ -142,5 +148,150 @@ class _NewExpenseState extends State<NewExpense> {
       ),
     );
     Navigator.pop(context);
+  }
+}
+
+class DecisionSection extends StatelessWidget {
+  final VoidCallback onSubmit;
+
+  const DecisionSection({super.key, required this.onSubmit});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Spacer(),
+        TextButton(
+          onPressed: Navigator.of(context).pop,
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: onSubmit,
+          child: const Text('Save Expense'),
+        ),
+      ],
+    );
+  }
+}
+
+class CategoryDropDown extends StatelessWidget {
+  final Category? pickedCategory;
+  final void Function(Category?) onPicked;
+
+  const CategoryDropDown({
+    super.key,
+    required this.pickedCategory,
+    required this.onPicked,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton(
+      value: pickedCategory,
+      items: Category.values
+          .map((category) => DropdownMenuItem(
+                value: category,
+                child: Text(category.name.toUpperCase()),
+              ))
+          .toList(),
+      onChanged: onPicked,
+    );
+  }
+}
+
+class DatePicker extends StatelessWidget {
+  final DateTime? pickedDate;
+  final VoidCallback onPickerPressed;
+
+  const DatePicker({
+    super.key,
+    required this.pickedDate,
+    required this.onPickerPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(
+            pickedDate != null
+                ? formateDate(date: pickedDate!)
+                : 'No date selected',
+          ),
+          IconButton(
+            onPressed: onPickerPressed,
+            icon: const Icon(Icons.calendar_month_rounded),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TitleAmountRow extends StatelessWidget {
+  const TitleAmountRow({
+    super.key,
+    required TextEditingController titleController,
+    required TextEditingController amountController,
+  })  : _titleController = titleController,
+        _amountController = amountController;
+
+  final TextEditingController _titleController;
+  final TextEditingController _amountController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: TitleTextField(
+            titleController: _titleController,
+          ),
+        ),
+        const SizedBox(width: 16),
+        AmountTextField(amountController: _amountController),
+      ],
+    );
+  }
+}
+
+class AmountTextField extends StatelessWidget {
+  const AmountTextField({
+    super.key,
+    required TextEditingController amountController,
+  }) : _amountController = amountController;
+
+  final TextEditingController _amountController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: TextField(
+        controller: _amountController,
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(label: Text('Amount')),
+      ),
+    );
+  }
+}
+
+class TitleTextField extends StatelessWidget {
+  const TitleTextField({
+    super.key,
+    required TextEditingController titleController,
+  }) : _titleController = titleController;
+
+  final TextEditingController _titleController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _titleController,
+      maxLength: 50,
+      decoration: const InputDecoration(label: Text('Title')),
+    );
   }
 }
