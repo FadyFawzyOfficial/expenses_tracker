@@ -122,7 +122,7 @@ class _NewExpenseState extends State<NewExpense> {
     if (isExpenseInValid) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AlertDialog.adaptive(
           title: const Text('Invalid input'),
           content: const Text(
             'Please, make sure a valid title, amount, date and category was entered',
