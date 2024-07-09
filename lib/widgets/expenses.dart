@@ -30,6 +30,7 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Tracker'),
@@ -42,19 +43,33 @@ class _ExpensesState extends State<Expenses> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Chart(expenses: _expenses),
-            Expanded(
-              child: _expenses.isEmpty
-                  ? const ExpensesEmptyState()
-                  : ExpensesList(
-                      expenses: _expenses,
-                      onRemoveExpense: _removeExpense,
-                    ),
-            ),
-          ],
-        ),
+        child: screenWidth < 600
+            ? Column(
+                children: [
+                  Chart(expenses: _expenses),
+                  Expanded(
+                    child: _expenses.isEmpty
+                        ? const ExpensesEmptyState()
+                        : ExpensesList(
+                            expenses: _expenses,
+                            onRemoveExpense: _removeExpense,
+                          ),
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(child: Chart(expenses: _expenses)),
+                  Expanded(
+                    child: _expenses.isEmpty
+                        ? const ExpensesEmptyState()
+                        : ExpensesList(
+                            expenses: _expenses,
+                            onRemoveExpense: _removeExpense,
+                          ),
+                  ),
+                ],
+              ),
       ),
     );
   }
