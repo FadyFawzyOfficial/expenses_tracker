@@ -27,72 +27,85 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(context) {
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              maxLength: 50,
-              decoration: const InputDecoration(label: Text('Title')),
+      child: SizedBox(
+        height: double.infinity,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: 16,
+              left: 16,
+              right: 16,
+              bottom: 16 + keyboardSpace,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(label: Text('Amount')),
-                  ),
+                TextField(
+                  controller: _titleController,
+                  maxLength: 50,
+                  decoration: const InputDecoration(label: Text('Title')),
                 ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        _pickedDate != null
-                            ? formateDate(date: _pickedDate!)
-                            : 'No date selected',
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _amountController,
+                        keyboardType: TextInputType.number,
+                        decoration:
+                            const InputDecoration(label: Text('Amount')),
                       ),
-                      IconButton(
-                        onPressed: _showDatePicker,
-                        icon: const Icon(Icons.calendar_month_rounded),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            _pickedDate != null
+                                ? formateDate(date: _pickedDate!)
+                                : 'No date selected',
+                          ),
+                          IconButton(
+                            onPressed: _showDatePicker,
+                            icon: const Icon(Icons.calendar_month_rounded),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    DropdownButton(
+                      value: _pickedCategory,
+                      items: Category.values
+                          .map((category) => DropdownMenuItem(
+                                value: category,
+                                child: Text(category.name.toUpperCase()),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => _pickedCategory = value);
+                      },
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: Navigator.of(context).pop,
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _submitExpense,
+                      child: const Text('Save Expense'),
+                    ),
+                  ],
                 )
               ],
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                DropdownButton(
-                  value: _pickedCategory,
-                  items: Category.values
-                      .map((category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category.name.toUpperCase()),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => _pickedCategory = value);
-                  },
-                ),
-                const Spacer(),
-                TextButton(
-                  onPressed: Navigator.of(context).pop,
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: _submitExpense,
-                  child: const Text('Save Expense'),
-                ),
-              ],
-            )
-          ],
+          ),
         ),
       ),
     );
